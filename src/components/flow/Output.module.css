@@ -1,15 +1,15 @@
-.WaveGenerator {
+.Output {
   margin: 3pt;
-  padding: 1pt 8pt 3pt 8pt;
+  padding: 8pt;
   border-radius: 10pt;
-  border: 1pt solid #9dcaff;
+  border: 1pt solid #ff8cd9;
   cursor: pointer;
   color: #fff;
   width: 80pt;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
   justify-content: left;
-  flex-direction: column;
 }
 
 .Controls {
@@ -29,3 +29,4 @@
   cursor: pointer;
   color: #fff;
 }
+

@@ -26,6 +26,7 @@ export type FlowSlice = {
   setNodes: (nodes: AppNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   addNodes: (nodes: AppNode[]) => void;
+  clearAll: () => void;
 
   updateNodeColor: (nodeId: string, color: string) => void;
 };
@@ -56,6 +57,9 @@ export const createFlowSlice: StateCreator<AppState, [], [], FlowSlice> = (
   },
   setEdges: (edges) => {
     set({ edges });
+  },
+  clearAll: () => {
+    set({ nodes: [], edges: [] });
   },
 
   addNodes: (nodes) => {

@@ -2,8 +2,9 @@ import { StateCreator } from "zustand";
 import { WaveGeneratorData } from "@/domain/WaveGenerator";
 import { getPrettyJson } from "@/utils/GetPrettyJson";
 import { AppNode, AppState } from "./types";
+import { OutputData } from "@/domain/Output";
 
-type SynthData = WaveGeneratorData;
+type SynthData = WaveGeneratorData | OutputData;
 
 export type SynthSlice = {
   // addSynthNode: (node: SynthData) => void;
@@ -23,7 +24,7 @@ export const createSynthSlice: StateCreator<AppState, [], [], SynthSlice> = (
             return node;
           }
           const data = { ...node.data, ...partial } as SynthData;
-          console.log("updateSynthNode, data:", getPrettyJson(data));
+          // console.log("updateSynthNode, data:", partial);
           return { ...node, data } as AppNode;
         }),
       };

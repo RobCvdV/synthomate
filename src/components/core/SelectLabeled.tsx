@@ -1,6 +1,7 @@
 import { ValueSource } from "@/types/ValueSource";
 import s from "./SelectLabeled.module.css";
 import { mergeClasses } from "@/utils/mergeClasses";
+import { Label } from "@core/Label";
 
 type OptionValues<T> = {
   value: T;
@@ -32,9 +33,7 @@ export function SelectLabeled<
 }: SelectLabeledProps<T>) {
   return (
     <div className={mergeClasses("SelectLabeled", className, s.SelectLabeled)}>
-      <label className={s.label} htmlFor={id}>
-        {label}
-      </label>
+      <Label className={s.label} htmlFor={id} text={label} />
       <select
         id={id}
         defaultValue={value}

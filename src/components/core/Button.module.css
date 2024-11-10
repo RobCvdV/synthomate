@@ -1,0 +1,22 @@
+.Button {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  background-color: #555;
+  border: 3px solid #ccc;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.7rem;
+  min-width: 50pt;
+  min-height: 30pt;
+}
+
+.label {
+  margin: 0.2rem;
+  font-size: 1rem;
+  color: #fff;
+}
+

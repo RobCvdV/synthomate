@@ -1,6 +1,6 @@
 import type { Node } from "@xyflow/react";
-import { ValueSource } from "../types/ValueSource";
-import { Id } from "../types/Id";
+import { ValueSource } from "@/types/ValueSource";
+import { Id } from "@/types/Id";
 
 export const WaveTypeDict = {
   sine: "Sine",

@@ -1,8 +1,10 @@
 import { FC } from "react";
 import { Synth, synth as synthInstance } from "../../domain/synth/synth";
-import { useStore } from "../../store/store";
 import { useShallow } from "zustand/react/shallow";
-import { AppState } from "../../store/types";
+import { useStore } from "@/store/store";
+import { AppState } from "@/store/types";
+import { mergeClasses } from "@/utils/mergeClasses";
+import { InputLabeled } from "@core/InputLabeled";
 
 const selector = (state: AppState) => ({
   nodes: state.nodes,
@@ -11,20 +13,23 @@ const selector = (state: AppState) => ({
 
 export type SynthRendererProps = {
   synth?: Synth;
+  className?: string;
 };
 
 export const SynthRenderer: FC<SynthRendererProps> = ({
   synth = synthInstance,
+  className,
 }) => {
+  // const { nodes, edges } = useStore(selector);
   const { nodes, edges } = useStore(useShallow(selector));
+  console.log("SynthRenderer", nodes, edges);
   return (
-    <div>
-      <div>
-        Nodes<span>{nodes.length}</span>
-      </div>
-      <div>
-        Edges<span>{edges.length}</span>
-      </div>
+    <div
+      className={mergeClasses("SynthRenderer", className)}
+      style={{ display: "flex", flexDirection: "column" }}
+    >
+      <InputLabeled label="Nodes" type="text" value={nodes.length} disabled />
+      <InputLabeled label="Edges" type="text" value={edges.length} disabled />
     </div>
   );
 };

@@ -1,20 +1,19 @@
 import React, { FC } from "react";
 import { Panel } from "@xyflow/react";
 import s from "./HeaderToolbar.module.css";
-import { AppNodeTypes } from "store/types";
-import { ColorChooserDnd } from "components/flow/ColorChooserNode";
-import { useDnd } from "components/dragAndDrop/DndContext";
-import { SynthRenderer } from "../audio/SynthRenderer";
+import { AppNodeTypes } from "@/store/types";
+import { ColorChooserDnd } from "@flow/ColorChooserNode";
+import { useDnd } from "@/components/dragAndDrop/DndContext";
+import { SynthRenderer } from "@/components/audio/SynthRenderer";
 import { WaveGeneratorDnd } from "@flow/WaveGeneratorNode";
 import { AnyObject } from "@/types/AnyObject";
 import { WaveGeneratorData, WaveTypes } from "@/domain/WaveGenerator";
+import { OutputDnd } from "@flow/OutputNode";
+import { Button } from "@core/Button";
+import { Spacer } from "@core/Spacer";
+import { useStore } from "@/store/store";
 
-export type HeaderToolbarProps = {
-  onAdd?: () => void;
-  onClear?: () => void;
-};
-
-export const HeaderToolbar: FC<HeaderToolbarProps> = ({}) => {
+export function HeaderToolbar() {
   const [, setProps] = useDnd();
 
   const onDragStart = (
@@ -26,9 +25,10 @@ export const HeaderToolbar: FC<HeaderToolbarProps> = ({}) => {
     event.dataTransfer.effectAllowed = "move";
   };
 
+  const clearAll = useStore((state) => state.clearAll);
+
   return (
     <Panel className={s.Header} position={"top-left"}>
-      <SynthRenderer />
       <ColorChooserDnd
         onDragStart={(e) =>
           onDragStart(e, "colorChooser", { color: "#4FD1C5" })
@@ -45,6 +45,13 @@ export const HeaderToolbar: FC<HeaderToolbarProps> = ({}) => {
           } as WaveGeneratorData)
         }
       />
+      <OutputDnd
+        label={"Output"}
+        onDragStart={(e) => onDragStart(e, "output")}
+      />
+      <Spacer />
+      <Button className={s.Info} label="Clear All" onClick={clearAll} />
+      <SynthRenderer className={s.Info} />
     </Panel>
   );
-};
+}

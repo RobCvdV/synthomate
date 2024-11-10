@@ -1,6 +1,6 @@
 import React, { ChangeEventHandler } from "react";
-import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { useStore } from "store/store";
+import { type Node, type NodeProps } from "@xyflow/react";
+import { useStore } from "@/store/store";
 import s from "./ColorChooser.module.css";
 import { AudioHandle } from "./AudioHandle";
 import { AnyEntity } from "@/types/AnyObject";
@@ -32,12 +32,12 @@ export function ColorChooserNode({ id, data }: NodeProps<ColorNode>) {
   const updateNodeColor = useStore((state) => state.updateNodeColor);
   return (
     <div className={s.Node}>
-      <AudioHandle type="target" position={Position.Right} />
+      <AudioHandle type="target" inOut={"in"} />
       <ColorChooser
         data={data}
         onChange={(evt) => updateNodeColor(id, evt.target.value)}
       />
-      <AudioHandle type="source" position={Position.Right} />
+      <AudioHandle type="source" inOut={"out"} />
     </div>
   );
 }

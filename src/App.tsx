@@ -10,6 +10,7 @@ import { WaveGeneratorNode } from "@flow/WaveGeneratorNode";
 import { HeaderToolbar } from "@/components/layout/HeaderToolbar";
 import { useOnDrop } from "@/components/dragAndDrop/onDrop";
 import { useOnDragOver } from "@/components/dragAndDrop/onDragOver";
+import { OutputNode } from "@flow/OutputNode";
 
 const selector = (state: AppState) => ({
   nodes: state.nodes,
@@ -26,6 +27,7 @@ const nodeColor = (node: AppNode) => {
 const nodeTypes = {
   colorChooser: ColorChooserNode,
   waveGenerator: WaveGeneratorNode,
+  output: OutputNode,
 };
 
 function App() {
