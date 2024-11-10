@@ -1,6 +1,7 @@
 import { StateCreator } from "zustand";
+import { WaveGeneratorData } from "@/domain/WaveGenerator";
+import { getPrettyJson } from "@/utils/GetPrettyJson";
 import { AppNode, AppState } from "./types";
-import { WaveGeneratorData } from "../domain/WaveGenerator";
 
 type SynthData = WaveGeneratorData;
 
@@ -21,8 +22,8 @@ export const createSynthSlice: StateCreator<AppState, [], [], SynthSlice> = (
           if (node.type === "colorChooser" || node.id !== id) {
             return node;
           }
-          console.log("updateSynthNode", id, partial, node.data);
           const data = { ...node.data, ...partial } as SynthData;
+          console.log("updateSynthNode, data:", getPrettyJson(data));
           return { ...node, data } as AppNode;
         }),
       };

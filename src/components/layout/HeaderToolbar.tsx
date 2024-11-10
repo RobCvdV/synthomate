@@ -5,9 +5,9 @@ import { AppNodeTypes } from "store/types";
 import { ColorChooserDnd } from "components/flow/ColorChooserNode";
 import { useDnd } from "components/dragAndDrop/DndContext";
 import { SynthRenderer } from "../audio/SynthRenderer";
-import { WaveGeneratorDnd } from "../flow/WaveGeneratorNode";
-import { AnyObject } from "../../types/AnyObject";
-import { WaveGeneratorData, WaveTypes } from "../../domain/WaveGenerator";
+import { WaveGeneratorDnd } from "@flow/WaveGeneratorNode";
+import { AnyObject } from "@/types/AnyObject";
+import { WaveGeneratorData, WaveTypes } from "@/domain/WaveGenerator";
 
 export type HeaderToolbarProps = {
   onAdd?: () => void;

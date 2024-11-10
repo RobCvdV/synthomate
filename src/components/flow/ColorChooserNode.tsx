@@ -1,9 +1,9 @@
 import React, { ChangeEventHandler } from "react";
-import { Handle, type Node, type NodeProps, Position } from "@xyflow/react";
+import { type Node, type NodeProps, Position } from "@xyflow/react";
 import { useStore } from "store/store";
 import s from "./ColorChooser.module.css";
 import { AudioHandle } from "./AudioHandle";
-import { AnyEntity } from "../../types/AnyObject";
+import { AnyEntity } from "@/types/AnyObject";
 
 export type ColorData = AnyEntity & {
   color: string;

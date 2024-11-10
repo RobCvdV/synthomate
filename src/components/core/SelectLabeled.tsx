@@ -1,7 +1,6 @@
-import { ValueSource } from "../../types/ValueSource";
+import { ValueSource } from "@/types/ValueSource";
 import s from "./SelectLabeled.module.css";
-import { mergeClasses } from "utils/mergeClasses";
-import { Id } from "types/Id";
+import { mergeClasses } from "@/utils/mergeClasses";
 
 type OptionValues<T> = {
   value: T;

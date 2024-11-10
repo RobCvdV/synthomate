@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { AppNode, AppState } from "./types";
+import { AppNode, AppState } from "@/store/types";
 import {
   addEdge,
   applyEdgeChanges,
@@ -11,7 +11,7 @@ import {
 } from "@xyflow/react";
 import { initialNodes } from "./demo-data/nodes";
 import { initialEdges } from "./demo-data/edges";
-import { ColorNode } from "components/flow/ColorChooserNode";
+import { ColorNode } from "@/components/flow/ColorChooserNode";
 
 function isColorChooserNode(node: AppNode): node is ColorNode {
   return node.type === "colorChooser";

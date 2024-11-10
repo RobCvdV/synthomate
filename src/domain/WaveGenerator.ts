@@ -1,6 +1,5 @@
 import type { Node } from "@xyflow/react";
 import { ValueSource } from "../types/ValueSource";
-import { AnyEntity } from "../types/AnyObject";
 import { Id } from "../types/Id";
 
 export const WaveTypeDict = {

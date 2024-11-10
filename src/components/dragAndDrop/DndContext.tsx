@@ -1,6 +1,6 @@
 import { createContext, FC, ReactNode, useContext, useState } from "react";
-import { AppNodeTypes } from "../../store/types";
-import { AnyObject } from "../../types/AnyObject";
+import { AppNodeTypes } from "@/store/types";
+import { AnyObject } from "@/types/AnyObject";
 
 type DndContextType = {
   type?: AppNodeTypes;

@@ -1,7 +1,7 @@
-import { ValueSource } from "../../types/ValueSource";
+import { ValueSource } from "@/types/ValueSource";
 import s from "./InputLabeled.module.css";
-import { mergeClasses } from "../../utils/mergeClasses";
 import { HTMLInputTypeAttribute } from "react";
+import { mergeClasses } from "@/utils/mergeClasses";
 
 export type InputLabeledProps = {
   label: string;

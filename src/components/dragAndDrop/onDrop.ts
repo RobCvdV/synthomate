@@ -1,10 +1,9 @@
 import { DragEventHandler, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { useDnd } from "./DndContext";
-import { useStore } from "store/store";
+import { useStore } from "@/store/store";
 import { v4 } from "uuid";
-import { ColorNode } from "components/flow/ColorChooserNode";
-import { AppNode } from "../../store/types";
+import { AppNode } from "@/store/types";
 
 // Dnd stuff
 let id = "";
@@ -44,6 +43,6 @@ export const useOnDrop = (): DragEventHandler<HTMLDivElement> => {
 
       addNodes([newNode]);
     },
-    [screenToFlowPosition, type],
+    [screenToFlowPosition, type, data, addNodes],
   );
 };

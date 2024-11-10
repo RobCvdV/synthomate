@@ -3,13 +3,13 @@ import { useShallow } from "zustand/react/shallow";
 import { Controls, MiniMap, ReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/base.css";
 import s from "./App.module.css";
-import { useStore } from "store/store";
-import { AppNode, AppState } from "store/types";
-import { ColorChooserNode } from "./components/flow/ColorChooserNode";
-import { HeaderToolbar } from "./components/layout/HeaderToolbar";
-import { useOnDrop } from "./components/dragAndDrop/onDrop";
-import { useOnDragOver } from "./components/dragAndDrop/onDragOver";
-import { WaveGeneratorNode } from "./components/flow/WaveGeneratorNode";
+import { useStore } from "@/store/store";
+import { AppNode, AppState } from "@/store/types";
+import { ColorChooserNode } from "@flow/ColorChooserNode";
+import { WaveGeneratorNode } from "@flow/WaveGeneratorNode";
+import { HeaderToolbar } from "@/components/layout/HeaderToolbar";
+import { useOnDrop } from "@/components/dragAndDrop/onDrop";
+import { useOnDragOver } from "@/components/dragAndDrop/onDragOver";
 
 const selector = (state: AppState) => ({
   nodes: state.nodes,

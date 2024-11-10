@@ -1,22 +1,15 @@
-import React, { ChangeEventHandler } from "react";
+import React from "react";
 import { type NodeProps, Position } from "@xyflow/react";
 import s from "./WaveGenerator.module.css";
-import { AudioNodeTypes } from "domain/synth/types";
-import { AudioHandle } from "./AudioHandle";
+import { AudioHandle } from "@flow/AudioHandle";
 import {
-  WaveGeneratorData,
   WaveGeneratorNodeType,
   WaveType,
   WaveTypeNames,
-} from "../../domain/WaveGenerator";
-import { useStore } from "store/store";
-import { InputLabeled } from "../core/InputLabeled";
-import { SelectLabeled } from "../core/SelectLabeled";
-
-type Props = {
-  data: WaveGeneratorData;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-};
+} from "@/domain/WaveGenerator";
+import { useStore } from "@/store/store";
+import { InputLabeled } from "@/components/core/InputLabeled";
+import { SelectLabeled } from "@/components/core/SelectLabeled";
 
 export function WaveGeneratorNode({
   id,
