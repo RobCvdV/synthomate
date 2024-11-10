@@ -1,0 +1,41 @@
+.WaveGenerator {
+  margin: 3pt;
+  padding: 8pt;
+  border-radius: 10pt;
+  border: 1pt solid #9dcaff;
+  cursor: pointer;
+  color: #fff;
+  width: 80pt;
+  display: flex;
+  align-items: stretch;
+  justify-content: left;
+  flex-direction: column;
+}
+.WaveGenerator > .InputLabeled,
+.WaveGenerator > select {
+  margin: 2pt 0;
+  padding: 0 2pt;
+  border: 1pt solid #9dcaff;
+  border-radius: 5pt;
+  background-color: #333;
+  color: #fff;
+}
+
+.Dnd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5pt;
+  width: 40pt;
+  height: 30pt;
+  background-color: #333;
+  border-radius: 25%;
+  border: 1pt solid #9dcaff;
+  cursor: pointer;
+  color: #fff;
+}
+
+.Dnd input {
+  scale: .8;
+}
+

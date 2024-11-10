@@ -1,0 +1,11 @@
+.AudioHandle {
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*align-items: center;*/
+  /*width: 1pt;*/
+  /*height: 1pt;*/
+  background-color: #000;
+  border-radius: 50%;
+  border: 1pt solid #bbb;
+  cursor: pointer;
+}

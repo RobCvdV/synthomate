@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { ReactFlow } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
+import { Controls, MiniMap, ReactFlow } from "@xyflow/react";
+import "@xyflow/react/dist/base.css";
 import s from "./App.module.css";
-
-import useStore from "store/store";
-import { AppState } from "store/types";
-import ColorChooserNode from "./components/flow/ColorChooseNode";
-
-const nodeTypes = { colorChooser: ColorChooserNode };
+import { useStore } from "store/store";
+import { AppNode, AppState } from "store/types";
+import { ColorChooserNode } from "./components/flow/ColorChooserNode";
+import { HeaderToolbar } from "./components/layout/HeaderToolbar";
+import { useOnDrop } from "./components/dragAndDrop/onDrop";
+import { useOnDragOver } from "./components/dragAndDrop/onDragOver";
+import { WaveGeneratorNode } from "./components/flow/WaveGeneratorNode";
 
 const selector = (state: AppState) => ({
   nodes: state.nodes,
@@ -18,22 +19,48 @@ const selector = (state: AppState) => ({
   onConnect: state.onConnect,
 });
 
+const nodeColor = (node: AppNode) => {
+  return node.type === "colorChooser" ? node.data.color : "gray";
+};
+
+const nodeTypes = {
+  colorChooser: ColorChooserNode,
+  waveGenerator: WaveGeneratorNode,
+};
+
 function App() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useStore(
     useShallow(selector),
   );
+  const reactFlowWrapper = useRef(null);
+
+  const onDragOver = useOnDragOver();
+  const onDrop = useOnDrop();
 
   return (
-    <div className={s.App}>
+    <div className={s.App} ref={reactFlowWrapper}>
       <ReactFlow
+        className={s.flow}
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
         fitView
-      />
+      >
+        <HeaderToolbar />
+        <MiniMap
+          nodeColor={nodeColor}
+          nodeStrokeWidth={3}
+          zoomable
+          pannable
+          bgColor={"#00000022"}
+        />
+        <Controls />
+      </ReactFlow>
     </div>
   );
 }

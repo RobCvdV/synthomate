@@ -1,4 +1,4 @@
-import { AppNode } from "./types";
+import { AppNode } from "../types";
 
 export const initialNodes = [
   {

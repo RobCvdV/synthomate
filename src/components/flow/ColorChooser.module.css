@@ -1,0 +1,19 @@
+.ColorChooser {
+  margin: 3pt;
+  padding: 8pt;
+  border-radius: 10pt;
+  color: #282c34;
+}
+
+.Node {
+  
+}
+
+.Dnd {
+  margin-left: 5pt;
+}
+
+.Dnd input {
+  scale: .8;
+}
+
