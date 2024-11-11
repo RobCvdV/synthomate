@@ -1,13 +1,16 @@
-import { createContext, FC, ReactNode, useContext, useState } from "react";
+import { FC, ReactNode } from "react";
 import { AppNodeTypes } from "@/store/types";
 import { AnyObject } from "@/types/AnyObject";
+import { create } from "zustand";
+
+// create a store using zustand to handle all the drag n drop state
 
 type DndContextType = {
   type?: AppNodeTypes;
   data?: AnyObject;
 };
 
-export const DndContext = createContext([{}, () => {}] as [
+export const DndContext = create()([{}, () => {}] as [
   DndContextType,
   (props: DndContextType) => void,
 ]);

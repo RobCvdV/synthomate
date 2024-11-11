@@ -7,8 +7,9 @@ import { mergeClasses } from "@/utils/mergeClasses";
 import { InputLabeled } from "@core/InputLabeled";
 
 const selector = (state: AppState) => ({
-  nodes: state.nodes,
-  edges: state.edges,
+  nodes: state.nodes.length,
+  edges: state.edges.length,
+  reduced elementary data here
 });
 
 export type SynthRendererProps = {
@@ -21,15 +22,16 @@ export const SynthRenderer: FC<SynthRendererProps> = ({
   className,
 }) => {
   // const { nodes, edges } = useStore(selector);
-  const { nodes, edges } = useStore(useShallow(selector));
+  const nodes = useStore((state) => state.nodes.length);
+  const edges = useStore((state) => state.edges.length);
   console.log("SynthRenderer", nodes, edges);
   return (
     <div
       className={mergeClasses("SynthRenderer", className)}
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <InputLabeled label="Nodes" type="text" value={nodes.length} disabled />
-      <InputLabeled label="Edges" type="text" value={edges.length} disabled />
+      <InputLabeled label="Nodes" type="text" value={nodes} disabled />
+      <InputLabeled label="Edges" type="text" value={edges} disabled />
     </div>
   );
 };
