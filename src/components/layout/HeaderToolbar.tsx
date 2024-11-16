@@ -1,8 +1,7 @@
-import React, { FC } from "react";
+import React, { useCallback } from "react";
 import { Panel } from "@xyflow/react";
 import s from "./HeaderToolbar.module.css";
 import { AppNodeTypes } from "@/store/types";
-import { ColorChooserDnd } from "@flow/ColorChooserNode";
 import { useDnd } from "@/components/dragAndDrop/DndContext";
 import { SynthRenderer } from "@/components/audio/SynthRenderer";
 import { WaveGeneratorDnd } from "@flow/WaveGeneratorNode";
@@ -13,28 +12,32 @@ import { Button } from "@core/Button";
 import { Spacer } from "@core/Spacer";
 import { useStore } from "@/store/store";
 
+let _tb = 0;
 export function HeaderToolbar() {
-  const [, setProps] = useDnd();
-
-  const onDragStart = (
-    event: React.DragEvent<HTMLDivElement>,
-    type: AppNodeTypes,
-    data?: AnyObject,
-  ) => {
-    setProps({ type, data });
-    event.dataTransfer.effectAllowed = "move";
-  };
-
+  const setProps = useDnd((s) => s.setProps);
   const clearAll = useStore((state) => state.clearAll);
+  console.log("HeaderToolbar render", _tb++);
+
+  const onDragStart = useCallback(
+    (
+      event: React.DragEvent<HTMLDivElement>,
+      type: AppNodeTypes,
+      data?: AnyObject,
+    ) => {
+      setProps(type, data);
+      event.dataTransfer.effectAllowed = "move";
+    },
+    [setProps],
+  );
 
   return (
     <Panel className={s.Header} position={"top-left"}>
-      <ColorChooserDnd
-        onDragStart={(e) =>
-          onDragStart(e, "colorChooser", { color: "#4FD1C5" })
-        }
-        color={"#4FD1C5"}
-      />
+      {/*<ColorChooserDnd*/}
+      {/*  onDragStart={(e) =>*/}
+      {/*    onDragStart(e, "colorChooser", { color: "#4FD1C5" })*/}
+      {/*  }*/}
+      {/*  color={"#4FD1C5"}*/}
+      {/*/>*/}
       <WaveGeneratorDnd
         label={"Wave"}
         onDragStart={(e) =>

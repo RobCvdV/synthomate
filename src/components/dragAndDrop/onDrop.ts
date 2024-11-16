@@ -14,7 +14,7 @@ const getId = () => {
 
 export const useOnDrop = (): DragEventHandler<HTMLDivElement> => {
   const { screenToFlowPosition } = useReactFlow();
-  const [{ type, data }] = useDnd();
+  const { type, data } = useDnd();
   const { addNodes } = useStore();
 
   return useCallback(

@@ -1,6 +1,5 @@
 import { StateCreator } from "zustand";
 import { WaveGeneratorData } from "@/domain/WaveGenerator";
-import { getPrettyJson } from "@/utils/GetPrettyJson";
 import { AppNode, AppState } from "./types";
 import { OutputData } from "@/domain/Output";
 
