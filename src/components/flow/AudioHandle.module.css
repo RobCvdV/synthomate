@@ -1,9 +1,9 @@
+
 .AudioHandle {
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
-  /*width: 1pt;*/
-  /*height: 1pt;*/
+  --size: 5pt;
+  min-width: var(--size);
+  width: var(--size);
+  min-height: var(--size);
   background-color: #000;
   border-radius: 50%;
   border: 1pt solid #bbb;

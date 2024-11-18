@@ -1,7 +1,7 @@
 import React from "react";
 import { NodeProps } from "@xyflow/react";
 import s from "./WaveGenerator.module.css";
-import { AudioHandle } from "@flow/AudioHandle";
+import { AudioInputHandle } from "@flow/AudioInputHandle";
 import {
   WaveGeneratorNodeType,
   WaveType,
@@ -12,6 +12,7 @@ import { InputLabeled } from "@/components/core/InputLabeled";
 import { SelectLabeled } from "@/components/core/SelectLabeled";
 import { mergeClasses } from "@/utils/mergeClasses";
 import { Label } from "@core/Label";
+import { AudioOutputHandle } from "@flow/AudioOutputHandle";
 
 export function WaveGeneratorNode({
   id,
@@ -22,32 +23,38 @@ export function WaveGeneratorNode({
   return (
     <div className={s.WaveGenerator}>
       <Label text={"Wave Generator"} />
-      {/*<AudioHandle type="target" id="waveGenerator" position={Position.Left} />*/}
-      <SelectLabeled<WaveType>
-        value={data.waveGenerator}
-        onChange={(v) => onUpdate({ id, waveGenerator: v })}
-        className={mergeClasses("nodrag", s.Controls)}
-        label="Wave"
-        options={WaveTypeNames}
-      />
-      <AudioHandle type="target" id="frequency" inOut={"in"} position={53} />
-      <InputLabeled
-        label="Amp"
-        type="number"
-        step={0.02}
-        value={data.amplitude}
-        onChange={(value) => onUpdate({ id, amplitude: parseFloat(value) })}
-        className={mergeClasses("nodrag", s.Controls)}
-      />
-      <AudioHandle type="target" id="amplitude" inOut={"in"} position={78} />
-      <InputLabeled
-        label="Freq"
-        type="number"
-        value={data.frequency}
-        onChange={(value) => onUpdate({ id, frequency: parseFloat(value) })}
-        className={mergeClasses("nodrag", s.Controls)}
-      />
-      <AudioHandle type="source" inOut={"out"} />
+      <div className={s.Controls}>
+        {/*<AudioHandle type="target" id="waveGenerator" position={Position.Left} />*/}
+        <SelectLabeled<WaveType>
+          value={data.waveGenerator}
+          onChange={(v) => onUpdate({ id, waveGenerator: v })}
+          className={mergeClasses("nodrag", s.Input)}
+          label="Wave"
+          options={WaveTypeNames}
+        />
+      </div>
+      <div className={s.Controls}>
+        <AudioInputHandle id="frequency" />
+        <InputLabeled
+          label="Amp"
+          type="number"
+          step={0.02}
+          value={data.amplitude}
+          onChange={(value) => onUpdate({ id, amplitude: parseFloat(value) })}
+          className={mergeClasses("nodrag", s.Input)}
+        />
+      </div>
+      <div className={s.Controls}>
+        <AudioInputHandle id="amplitude" />
+        <InputLabeled
+          label="Freq"
+          type="number"
+          value={data.frequency}
+          onChange={(value) => onUpdate({ id, frequency: parseFloat(value) })}
+          className={mergeClasses("nodrag", s.Input)}
+        />
+      </div>
+      <AudioOutputHandle id="out" />
     </div>
   );
 }

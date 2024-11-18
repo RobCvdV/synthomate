@@ -4,7 +4,6 @@ import React from "react";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { AppNode, AppState } from "@/store/types";
-import { ColorChooserNode } from "@flow/ColorChooserNode";
 import { WaveGeneratorNode } from "@flow/WaveGeneratorNode";
 import { OutputNode } from "@flow/OutputNode";
 import { useOnDrop } from "@/components/dragAndDrop/onDrop";
@@ -23,7 +22,6 @@ const nodeColor = (node: AppNode) => {
 };
 
 const nodeTypes = {
-  colorChooser: ColorChooserNode,
   waveGenerator: WaveGeneratorNode,
   output: OutputNode,
 };

@@ -9,7 +9,6 @@
 
 .label {
   flex: 0;
-  display: inline-block;
   margin-right: 0.2rem;
   font-size: 0.5rem;
   color: #bbb;
@@ -17,9 +16,9 @@
 
 .select {
   flex: 1;
-  min-width: 50pt;
+  min-width: 30pt;
+  flex: 1;
   font-size: 0.7rem;
-  display: inline-block;
   padding: 0;
   border: 1px solid #ccc;
   border-radius: 0.2rem;
