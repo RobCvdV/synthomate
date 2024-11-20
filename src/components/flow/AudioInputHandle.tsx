@@ -9,6 +9,9 @@ import {
 import s from "./AudioHandle.module.css";
 import { Id } from "@/types/Id";
 import { ElemNode } from "@elemaudio/core";
+import { getSynth } from "@/domain/synth/synth";
+import { AppNode } from "@/store/types";
+import { WaveGeneratorData } from "@/domain/WaveGenerator";
 
 export type AudioHandleProps = Omit<
   HandleProps,
@@ -34,6 +37,22 @@ export const AudioInputHandle: FC<AudioHandleProps> = ({
   });
   const nodeData = useNodesData(connections?.[0]?.source);
   useEffect(() => {
+    console.log("input", id, "nodeData", nodeData?.data);
+    if (!nodeData?.data || !nodeData?.type) {
+      return;
+    }
+    getSynth().then((synth) => {
+      if (!synth) {
+        return;
+      }
+      if (nodeData.type === "waveGenerator") {
+        const waveGen = synth.createWaveGenerator(
+          nodeData.data as WaveGeneratorData,
+        );
+        console.log("input onChane", nodeData.id, waveGen);
+        onChange?.(waveGen);
+      }
+    });
     // onChange(nodeData?.data ? nodeData.data.value : 0);
   }, [nodeData]);
 

@@ -1,1 +1,1 @@
-export type ValueSource = number | string;
+export type ValueSource = number;

@@ -10,7 +10,7 @@ type OptionValues<T> = {
 
 export type SelectLabeledProps<T> = {
   label: string;
-  value: ValueSource;
+  value: number | string;
   options: OptionValues<T>[];
   onChange: (value: T) => void;
   disabled?: boolean;

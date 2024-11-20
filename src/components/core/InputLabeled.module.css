@@ -16,7 +16,7 @@
 
 .input {
   flex: 1;
-  min-width: 30pt;
+  min-width: 20pt;
   font-size: 0.7rem;
   padding: 0 2pt;
   border: 1px solid #ccc;

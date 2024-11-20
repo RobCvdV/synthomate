@@ -1,0 +1,14 @@
+.SynthRenderer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.Status {
+  margin-left: 5pt;
+  margin-right: 5pt;
+  width: 40pt;
+  display: flex;
+  flex-direction: column;
+}

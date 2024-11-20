@@ -1,49 +1,96 @@
-import { FC, useEffect } from "react";
-import { Synth } from "../../domain/synth/synth";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getSynth, Synth } from "@/domain/synth/synth";
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/store/store";
 import { AppState } from "@/store/types";
 import { mergeClasses } from "@/utils/mergeClasses";
 import { InputLabeled } from "@core/InputLabeled";
-import { shallow } from "zustand/vanilla/shallow";
+import { withLogger } from "@core/withLogger";
+import s from "./SynthRenderer.module.css";
+import { ToggleButton } from "@core/ToggleButton";
+import { el } from "@elemaudio/core";
+import { OutputData } from "@/domain/Output";
+import { memoize } from "lodash";
 
 function createSynthNodesFromFlow(state: AppState) {
   const nodes = state.nodes;
   const edges = state.edges;
-  // const synthNodes = nodes.map((node) => {
-  //   return synthInstance.createNode(node);
-  // });
-  // return synthNodes;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const outputData = nodes
+    .filter((node) => node.type === "output" && node.data)
+    .map<OutputData>((node) => node.data as OutputData)[0];
+  // console.log("outputs", outputData);
+  if (!outputData?.volume) {
+    return undefined;
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return outputData;
 }
 
 const selector = (state: AppState) => ({
   nodes: state.nodes.length,
   edges: state.edges.length,
   // todo: reduced elementary data here
+  outputData: createSynthNodesFromFlow(state),
 });
 
 export type SynthRendererProps = {
-  synth?: Synth;
   className?: string;
 };
 
-export const SynthRenderer: FC<SynthRendererProps> = ({ className }) => {
-  const { nodes, edges } = useStore(useShallow(selector));
-  // const nodes = useStore((state) => state.nodes.length);
-  // const edges = useStore((state) => state.edges.length);
-  // const nodes = 1;
-  // const edges = 1;
-  // useEffect(() => {
-  //   console.log("SynthRenderer useEffect", synth.ctx.state);
-  // }, [synth]);
-  // console.log("SynthRenderer", nodes, edges);
-  return (
-    <div
-      className={mergeClasses("SynthRenderer", className)}
-      style={{ display: "flex", flexDirection: "column" }}
-    >
-      <InputLabeled label="Nodes" type="text" value={nodes} disabled />
-      <InputLabeled label="Edges" type="text" value={edges} disabled />
-    </div>
-  );
-};
+const playToggleStates = [
+  { label: "▶", value: false },
+  { label: "◼︎", value: true, bgColor: "green" },
+];
+
+export const SynthRenderer = withLogger<SynthRendererProps>(
+  "SynthRenderer",
+  ({ className, log }) => {
+    const { nodes, edges } = useStore(useShallow(selector));
+    const outputData = useStore(useShallow(selector)).outputData;
+    const [play, setPlay] = useState(false);
+
+    const onPlayToggle = useCallback(
+      (playing: boolean) => {
+        getSynth(true).then(() => setPlay(playing));
+      },
+      [setPlay],
+    );
+
+    useEffect(() => {
+      getSynth().then((synth) => {
+        if (!synth) {
+          return;
+        }
+        const { volume = 0, id } = outputData ?? {};
+        const vol = el.const({ key: `${id}`, value: volume });
+        const { left = el.cycle(220), right = el.cycle(221) } =
+          outputData ?? {};
+
+        if (play) {
+          // log("rendering cycle");
+          synth.render(el.mul(vol, left), el.mul(vol, right));
+        } else {
+          synth.render(el.sin(0), el.sin(0));
+        }
+      });
+    }, [play, outputData]);
+
+    return (
+      <div
+        className={mergeClasses("SynthRenderer", className, s.SynthRenderer)}
+      >
+        <ToggleButton<boolean>
+          states={playToggleStates}
+          onChange={onPlayToggle}
+          width={"50pt"}
+          style={{ fontSize: "1.2em" }}
+        />
+        <div className={s.Status}>
+          <InputLabeled label="Nodes" type="text" value={nodes} disabled />
+          <InputLabeled label="Edges" type="text" value={edges} disabled />
+        </div>
+      </div>
+    );
+  },
+);

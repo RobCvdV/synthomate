@@ -7,7 +7,9 @@ type SynthData = WaveGeneratorData | OutputData;
 
 export type SynthSlice = {
   // addSynthNode: (node: SynthData) => void;
-  updateSynthNode: (partial: Partial<SynthData>) => void;
+  updateSynthNode: <D extends SynthData = SynthData>(
+    partial: Partial<D>,
+  ) => void;
 };
 
 export const createSynthSlice: StateCreator<AppState, [], [], SynthSlice> = (

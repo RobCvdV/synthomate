@@ -1,15 +1,11 @@
 import type { Node } from "@xyflow/react";
-import { ValueSource } from "@/types/ValueSource";
 import { Id } from "@/types/Id";
-
-export enum OutputType {
-  left,
-  right,
-}
+import { ElemNode } from "@elemaudio/core";
 
 export type OutputData = { id: Id } & {
-  output: OutputType;
-  volume: ValueSource;
+  volume: number; // ValueSource;
+  left?: ElemNode;
+  right?: ElemNode;
   mute: boolean;
 };
 export type OutputNodeType = Node<OutputData, "output">;

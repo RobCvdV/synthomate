@@ -7,8 +7,9 @@ import {
   AudioProps,
 } from "./types";
 import { AppNode } from "@/store/types";
-import { WaveGeneratorData } from "@/domain/WaveGenerator";
+import { WaveGeneratorData, WaveType } from "@/domain/WaveGenerator";
 import { Exception } from "@/types/Exception";
+import { SynthData } from "@/domain/synth/data";
 
 export class Synth {
   isInitialized = false;
@@ -20,7 +21,7 @@ export class Synth {
   ) {}
 
   init() {
-    if (this.isInitialized || this.ctx.state === "running") {
+    if (this.isInitialized) {
       console.log("Synth is already initialized");
       return Promise.resolve(this);
     }
@@ -51,35 +52,49 @@ export class Synth {
     return el.const({ key: "silence", value: 0 });
   }
 
-  static sin() {
-    return el.square(440);
-  }
-
-  createWaveGenerator(node: AppNode) {
-    const { id, data } = node;
-    const { frequency, waveGenerator, amplitude } = data as WaveGeneratorData;
-    const amp = el.const;
-    // return el.mul(amplitude, el.osc(frequency, waveGenerator));
-  }
-
-  createNode(node: AppNode) {
-    switch (node.type) {
-      case "waveGenerator":
-        return this.createWaveGenerator(node);
+  static getWaveType(type: WaveType, rate: ElemNode): ElemNode {
+    switch (type) {
+      case "sine":
+        return el.cycle(rate);
+      case "square":
+        return el.square(rate);
+      case "saw":
+        return el.saw(rate);
+      case "triangle":
+        return el.triangle(rate);
+      case "blepsquare":
+        return el.blepsquare(rate);
+      case "blepsaw":
+        return el.blepsaw(rate);
+      case "bleptriangle":
+        return el.bleptriangle(rate);
+      case "metro":
+        return el.metro();
+      case "noise":
+        return el.noise();
       default:
-        throw Exception.IsNotImplemented.because(
-          node.type + " is not implemented",
-        );
+        throw Exception.IsNotImplemented.because(type + " is not implemented");
     }
   }
 
-  svf(props: AudioProps<"svf">, ...params: AudioParams<"svf">): ElemNode {
-    return el.svf(props, ...params);
+  createWaveGenerator(data: WaveGeneratorData): ElemNode {
+    const { frequency, waveGenerator, amplitude, id } = data;
+    const amp = el.const({ key: id + "_amp", value: amplitude });
+    const freq = el.const({ key: id + "_freq", value: frequency });
+    const wave = Synth.getWaveType(waveGenerator, freq);
+    return el.mul(amp, wave);
   }
 
-  mul(props: AudioProps<"mul">, ...params: AudioParams<"mul">): ElemNode {
-    return el.mul(props, ...params);
-  }
+  // createNode(node: SynthData) {
+  //   switch (node.type) {
+  //     case "waveGenerator":
+  //       return this.createWaveGenerator(node);
+  //     default:
+  //       throw Exception.IsNotImplemented.because(
+  //         node.type + " is not implemented",
+  //       );
+  //   }
+  // }
 
   getRefConst(key: string, value: number) {
     return this.core.createRef("const", { key }, [value]);
@@ -88,7 +103,7 @@ export class Synth {
   getRefNode<N extends AudioNodeType>(
     node: N,
     props: AudioProps<N>,
-    ...params: AudioParams<N> | any[]
+    params: AudioParams<N>,
   ) {
     if (!this.isInitialized) {
       console.log("Synth is not initialized. Call synth.init() first");
@@ -103,4 +118,20 @@ export class Synth {
   }
 }
 
-// export const synth = new Synth();
+let _synthInstance: Synth;
+export function getSynth(init?: boolean) {
+  if (init) {
+    if (_synthInstance) {
+      return Promise.resolve(_synthInstance);
+    }
+    _synthInstance = new Synth();
+    return _synthInstance.init().then((synth) => {
+      console.log(
+        "SynthRenderer: synthInstance initialized",
+        typeof synth.render,
+      );
+      return synth;
+    });
+  }
+  return Promise.resolve(_synthInstance);
+}
