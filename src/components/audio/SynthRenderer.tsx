@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getSynth, Synth } from "@/domain/synth/synth";
+import { useCallback, useEffect, useState } from "react";
+import { getSynth } from "@/domain/synth/synth";
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/store/store";
 import { AppState } from "@/store/types";
@@ -10,16 +10,12 @@ import s from "./SynthRenderer.module.css";
 import { ToggleButton } from "@core/ToggleButton";
 import { el } from "@elemaudio/core";
 import { OutputData } from "@/domain/Output";
-import { memoize } from "lodash";
 
 function createSynthNodesFromFlow(state: AppState) {
   const nodes = state.nodes;
-  const edges = state.edges;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const outputData = nodes
     .filter((node) => node.type === "output" && node.data)
     .map<OutputData>((node) => node.data as OutputData)[0];
-  // console.log("outputs", outputData);
   if (!outputData?.volume) {
     return undefined;
   }
@@ -27,12 +23,15 @@ function createSynthNodesFromFlow(state: AppState) {
   return outputData;
 }
 
-const selector = (state: AppState) => ({
-  nodes: state.nodes.length,
-  edges: state.edges.length,
-  // todo: reduced elementary data here
-  outputData: createSynthNodesFromFlow(state),
-});
+const selector = (state: AppState) => {
+  const outputData = createSynthNodesFromFlow(state);
+  return {
+    nodes: state.nodes,
+    edges: state.edges.length,
+    // todo: reduced elementary data here
+    outputData,
+  };
+};
 
 export type SynthRendererProps = {
   className?: string;
@@ -59,22 +58,19 @@ export const SynthRenderer = withLogger<SynthRendererProps>(
 
     useEffect(() => {
       getSynth().then((synth) => {
-        if (!synth) {
+        if (!synth || !outputData) {
           return;
         }
-        const { volume = 0, id } = outputData ?? {};
-        const vol = el.const({ key: `${id}`, value: volume });
-        const { left = el.cycle(220), right = el.cycle(221) } =
-          outputData ?? {};
+        const channels = synth.createOutput(outputData);
 
         if (play) {
           // log("rendering cycle");
-          synth.render(el.mul(vol, left), el.mul(vol, right));
+          synth.render(...channels);
         } else {
           synth.render(el.sin(0), el.sin(0));
         }
       });
-    }, [play, outputData]);
+    }, [play, nodes, outputData]);
 
     return (
       <div
@@ -87,7 +83,12 @@ export const SynthRenderer = withLogger<SynthRendererProps>(
           style={{ fontSize: "1.2em" }}
         />
         <div className={s.Status}>
-          <InputLabeled label="Nodes" type="text" value={nodes} disabled />
+          <InputLabeled
+            label="Nodes"
+            type="text"
+            value={nodes.length}
+            disabled
+          />
           <InputLabeled label="Edges" type="text" value={edges} disabled />
         </div>
       </div>

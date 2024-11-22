@@ -14,3 +14,9 @@ export const useStore = create<AppState>()(
     ...createSynthSlice(...args),
   })),
 );
+
+export const getState = useStore.getState;
+
+export const getNodesById = (...ids: string[]) => {
+  return getState().nodes.filter((n) => ids.includes(n.id));
+};

@@ -1,66 +1,79 @@
-import { CSSProperties, FC, useEffect, useMemo } from "react";
+import { CSSProperties, FC, useCallback, useMemo, useState } from "react";
 import {
+  Connection,
   Handle,
   HandleProps,
   Position,
   useHandleConnections,
-  useNodesData,
 } from "@xyflow/react";
+
 import s from "./AudioHandle.module.css";
-import { Id } from "@/types/Id";
-import { ElemNode } from "@elemaudio/core";
-import { getSynth } from "@/domain/synth/synth";
-import { AppNode } from "@/store/types";
-import { WaveGeneratorData } from "@/domain/WaveGenerator";
 
 export type AudioHandleProps = Omit<
   HandleProps,
   "position" | "type" | "onChange"
 > & {
-  id: Id;
-  onChange?: (value: ElemNode) => void;
+  nodeId: string;
+  id: string;
+  onChange: (values: string[]) => void;
   position?: string | number; // give location of the handle as 1/3 or 2/3 or 30%, number will be interpreted as percentage
   offset?: number;
 };
 
+function useConnectionChange(
+  nodeId: string,
+  id: string,
+  onChange: (data: string[]) => void,
+) {
+  const [, setSources] = useState<string[]>([]);
+  const onConnect = useCallback(
+    (connections: Connection[]) => {
+      setSources((ss) => {
+        const newCs = [
+          ...new Set([...ss, ...connections.map((c) => c.source)]),
+        ];
+        onChange(newCs);
+        return newCs;
+      });
+    },
+    [onChange, setSources],
+  );
+
+  const onDisconnect = useCallback(
+    (connections: Connection[]) => {
+      setSources((ss) => {
+        const newCs = ss.filter(
+          (s) => !connections.some((c) => c.source === s),
+        );
+        onChange(newCs);
+        return newCs;
+      });
+    },
+    [onChange, setSources],
+  );
+  useHandleConnections({
+    type: "target",
+    nodeId,
+    id,
+    onConnect: onConnect,
+    onDisconnect: onDisconnect,
+  });
+}
+
 export const AudioInputHandle: FC<AudioHandleProps> = ({
   id,
+  nodeId,
   offset = 0,
   position,
   style,
   onChange,
   ...props
 }) => {
-  const connections = useHandleConnections({
-    type: "target",
-    id,
-  });
-  const nodeData = useNodesData(connections?.[0]?.source);
-  useEffect(() => {
-    console.log("input", id, "nodeData", nodeData?.data);
-    if (!nodeData?.data || !nodeData?.type) {
-      return;
-    }
-    getSynth().then((synth) => {
-      if (!synth) {
-        return;
-      }
-      if (nodeData.type === "waveGenerator") {
-        const waveGen = synth.createWaveGenerator(
-          nodeData.data as WaveGeneratorData,
-        );
-        console.log("input onChane", nodeData.id, waveGen);
-        onChange?.(waveGen);
-      }
-    });
-    // onChange(nodeData?.data ? nodeData.data.value : 0);
-  }, [nodeData]);
+  useConnectionChange(nodeId, id, onChange);
 
   const innerStyle = useMemo<CSSProperties>(() => {
     if (position === undefined) {
-      return {
-        // transform: "translate(-50%, 0)",
-      };
+      return {};
     }
 
     let top = position;

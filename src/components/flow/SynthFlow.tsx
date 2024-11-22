@@ -3,7 +3,7 @@ import s from "@/App.module.css";
 import React from "react";
 import { useStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { AppNode, AppState } from "@/store/types";
+import { AppState } from "@/store/types";
 import { WaveGeneratorNode } from "@flow/WaveGeneratorNode";
 import { OutputNode } from "@flow/OutputNode";
 import { useOnDrop } from "@/components/dragAndDrop/onDrop";
@@ -16,10 +16,6 @@ const selector = (state: AppState) => ({
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
 });
-
-const nodeColor = (node: AppNode) => {
-  return node.type === "colorChooser" ? node.data.color : "gray";
-};
 
 const nodeTypes = {
   waveGenerator: WaveGeneratorNode,
@@ -49,7 +45,7 @@ export function SynthFlow() {
     >
       {/*<HeaderToolbar />*/}
       <MiniMap
-        nodeColor={nodeColor}
+        // nodeColor={nodeColor}
         nodeStrokeWidth={3}
         zoomable
         pannable

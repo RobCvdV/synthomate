@@ -1,5 +1,4 @@
 .WaveGenerator {
-  /*margin: 3pt;*/
   padding: 3pt 0;
   border-radius: 10pt;
   border: 1pt solid #9dcaff;
@@ -13,7 +12,6 @@
 }
 
 .Controls {
-  /*width: calc(100%);*/
   position: relative;
   flex: 1;
   display: flex;
@@ -24,7 +22,6 @@
 }
 
 .Input {
-  /*display: inline;*/
   flex: 1;
   min-width: calc(90% - 16pt);
   margin: 0 8pt;

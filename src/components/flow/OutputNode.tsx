@@ -6,7 +6,6 @@ import { OutputData, OutputNodeType } from "@/domain/Output";
 import { InputLabeled } from "@/components/core/InputLabeled";
 import { mergeClasses } from "@/utils/mergeClasses";
 import { Label } from "@core/Label";
-import { ElemNode } from "@elemaudio/core";
 import { withLogger } from "@core/withLogger";
 import { useStore } from "@/store/store";
 
@@ -17,33 +16,39 @@ export const OutputNode = withLogger<Props>(
   ({ id, data, log }) => {
     const onUpdate = useStore((state) => state.updateSynthNode<OutputData>);
 
-    const onInputChange = useCallback(
-      (channel: "left" | "right", value?: ElemNode) => {
-        onUpdate({ id, [channel]: value });
-      },
-      [onUpdate],
-    );
-
     const onVolumeChange = useCallback(
       (vol: string) => {
-        const volume = parseFloat(vol) / 100;
+        const volume = parseFloat(vol) / 1000;
+        log("onVolumeChange", volume);
         onUpdate({ id, volume });
       },
-      [onUpdate],
+      [onUpdate, id],
+    );
+
+    const onLeftChange = useCallback(
+      (v: string[]) => onUpdate({ id, left: v }),
+      [onUpdate, id],
+    );
+
+    const onRightChange = useCallback(
+      (v: string[]) => onUpdate({ id, right: v }),
+      [onUpdate, id],
     );
 
     return (
       <div className={s.Output}>
         <Label text={"Output"} />
         <AudioInputHandle
+          nodeId={id}
           id="left"
           position={"1/2"}
-          onChange={(v) => onInputChange("left", v)}
+          onChange={onLeftChange}
         />
         <AudioInputHandle
+          nodeId={id}
           id="right"
           position={"2/2"}
-          onChange={(v) => onInputChange("right", v)}
+          onChange={onRightChange}
         />
         <InputLabeled
           label="Vol"
@@ -51,7 +56,7 @@ export const OutputNode = withLogger<Props>(
           step={1}
           min={0}
           max={100}
-          value={data.volume * 100}
+          value={data.volume * 1000}
           onChange={onVolumeChange}
           className={mergeClasses("nodrag", s.Controls)}
         />

@@ -38,7 +38,7 @@ export const useOnDrop = (): DragEventHandler<HTMLDivElement> => {
         id,
         type,
         position,
-        data: { id, ...data } as any,
+        data: { id, type, ...data } as any,
       };
 
       addNodes([newNode]);

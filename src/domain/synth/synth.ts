@@ -1,15 +1,11 @@
 import { el, ElemNode } from "@elemaudio/core";
 import WebRenderer from "@elemaudio/web-renderer";
-import {
-  AudioNodeParams,
-  AudioNodeType,
-  AudioParams,
-  AudioProps,
-} from "./types";
-import { AppNode } from "@/store/types";
+import { AudioNodeType, AudioParams, AudioProps } from "./types";
 import { WaveGeneratorData, WaveType } from "@/domain/WaveGenerator";
 import { Exception } from "@/types/Exception";
-import { SynthData } from "@/domain/synth/data";
+import { SynthData } from "@/store/synthSlice";
+import { OutputData } from "@/domain/Output";
+import { getNodesById } from "@/store/store";
 
 export class Synth {
   isInitialized = false;
@@ -49,7 +45,7 @@ export class Synth {
   }
 
   static silence() {
-    return el.const({ key: "silence", value: 0 });
+    return el.sin(0);
   }
 
   static getWaveType(type: WaveType, rate: ElemNode): ElemNode {
@@ -78,23 +74,59 @@ export class Synth {
   }
 
   createWaveGenerator(data: WaveGeneratorData): ElemNode {
-    const { frequency, waveGenerator, amplitude, id } = data;
-    const amp = el.const({ key: id + "_amp", value: amplitude });
-    const freq = el.const({ key: id + "_freq", value: frequency });
+    const {
+      frequency,
+      waveGenerator,
+      amplitude,
+      id,
+      frequencyIn = [],
+      amplitudeIn = [],
+    } = data;
+    let freq = el.const({ key: id + "_freq", value: frequency });
+    if (frequencyIn.length) {
+      const freqIn = el.add(...frequencyIn.map((d) => this.createNode(d)));
+      freq = el.mul(freq, freqIn);
+    }
+
+    let amp = el.const({ key: id + "_amp", value: amplitude });
+    if (amplitudeIn.length) {
+      const ampIn = el.add(...amplitudeIn.map((d) => this.createNode(d)));
+      amp = el.mul(amp, ampIn);
+    }
+
     const wave = Synth.getWaveType(waveGenerator, freq);
     return el.mul(amp, wave);
   }
 
-  // createNode(node: SynthData) {
-  //   switch (node.type) {
-  //     case "waveGenerator":
-  //       return this.createWaveGenerator(node);
-  //     default:
-  //       throw Exception.IsNotImplemented.because(
-  //         node.type + " is not implemented",
-  //       );
-  //   }
-  // }
+  createOutput(data: OutputData): [ElemNode, ElemNode] {
+    const { volume, id, left = [], right = [] } = data;
+    const leftNodes = left.map((d) => this.createNode(d));
+    const rightNodes = right.map((d) => this.createNode(d));
+    if (!leftNodes.length) {
+      leftNodes.push(Synth.silence());
+    }
+    if (!rightNodes.length) {
+      rightNodes.push(Synth.silence());
+    }
+    const vol = el.const({ key: id + "_vol", value: volume });
+    return [
+      el.mul(vol, el.add(...leftNodes)),
+      el.mul(vol, el.add(...rightNodes)),
+    ];
+  }
+
+  createNode(nodeId: string) {
+    const data = getNodesById(nodeId)?.[0].data as SynthData;
+    if (!data?.type) {
+      return Synth.silence();
+    }
+    switch (data.type) {
+      case "waveGenerator":
+        return this.createWaveGenerator(data as WaveGeneratorData);
+      case "output":
+        return Synth.silence();
+    }
+  }
 
   getRefConst(key: string, value: number) {
     return this.core.createRef("const", { key }, [value]);

@@ -18,9 +18,7 @@ export const AudioOutputHandle: FC<AudioHandleProps> = ({
 }) => {
   const innerStyle = useMemo<CSSProperties>(() => {
     if (position === undefined) {
-      return {
-        // position: "relative",
-      };
+      return {};
     }
 
     let top = position;
@@ -39,7 +37,6 @@ export const AudioOutputHandle: FC<AudioHandleProps> = ({
   }, [position, style, offset]);
 
   return (
-    // <div className={s.AudioHandle}>
     <Handle
       id={id}
       className={s.AudioHandle}
@@ -48,9 +45,5 @@ export const AudioOutputHandle: FC<AudioHandleProps> = ({
       type="source"
       {...props}
     />
-    // {/*<label htmlFor="red" className="label">*/}
-    // {/*  {label}*/}
-    // {/*</label>*/}
-    // </div>
   );
 };

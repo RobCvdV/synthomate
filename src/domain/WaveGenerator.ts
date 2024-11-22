@@ -2,6 +2,7 @@ import type { Node } from "@xyflow/react";
 import { ValueSource } from "@/types/ValueSource";
 import { Id } from "@/types/Id";
 import { ElemNode } from "@elemaudio/core";
+import { SynthData } from "@/store/synthSlice";
 
 export const WaveTypeDict = {
   sine: "Sine",
@@ -32,9 +33,13 @@ export const WaveTypes = AllWaveTypes.reduce<Record<WaveType, WaveType>>(
   {} as Record<WaveType, WaveType>,
 );
 
-export type WaveGeneratorData = { id: Id } & {
+export type WaveGeneratorData = {
+  id: Id;
+  type: "waveGenerator";
   waveGenerator: WaveType;
   frequency: ValueSource;
   amplitude: ValueSource;
+  frequencyIn?: string[];
+  amplitudeIn?: string[];
 };
 export type WaveGeneratorNodeType = Node<WaveGeneratorData, "waveGenerator">;

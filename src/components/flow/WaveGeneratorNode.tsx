@@ -3,7 +3,6 @@ import { NodeProps } from "@xyflow/react";
 import s from "./WaveGenerator.module.css";
 import { AudioInputHandle } from "@flow/AudioInputHandle";
 import {
-  WaveGeneratorData,
   WaveGeneratorNodeType,
   WaveType,
   WaveTypeNames,
@@ -15,7 +14,6 @@ import { mergeClasses } from "@/utils/mergeClasses";
 import { Label } from "@core/Label";
 import { AudioOutputHandle } from "@flow/AudioOutputHandle";
 import { withLogger } from "@core/withLogger";
-import { ElemNode } from "@elemaudio/core";
 
 function getStep(value: number) {
   if (value < 1) return 0.01;
@@ -29,13 +27,22 @@ export const WaveGeneratorNode = withLogger<NodeProps<WaveGeneratorNodeType>>(
   ({ id, data }: NodeProps<WaveGeneratorNodeType>) => {
     const onUpdate = useStore((state) => state.updateSynthNode);
 
-    // put inputs in data as well? or let the Node create the ElemNode and is that the data?
-    // the ElemNode can then be directly applied to output
-    const onValueChange = useCallback(
-      (prop: "frequency" | "amplitude", value?: ElemNode) => {
-        onUpdate<WaveGeneratorData>({ id, [prop]: value });
-      },
-      [onUpdate],
+    const onChangeAmplitude = useCallback(
+      (value: string) => onUpdate({ id, amplitude: parseFloat(value) }),
+      [onUpdate, id],
+    );
+    const onChangeFrequency = useCallback(
+      (value: string) => onUpdate({ id, frequency: parseFloat(value) }),
+      [onUpdate, id],
+    );
+
+    const onChangeAmplitudeInputs = useCallback(
+      (values: string[]) => onUpdate({ id, amplitudeIn: values }),
+      [onUpdate, id],
+    );
+    const onChangeFrequencyInputs = useCallback(
+      (values: string[]) => onUpdate({ id, frequencyIn: values }),
+      [onUpdate, id],
     );
 
     return (
@@ -52,24 +59,32 @@ export const WaveGeneratorNode = withLogger<NodeProps<WaveGeneratorNodeType>>(
           />
         </div>
         <div className={s.Controls}>
-          <AudioInputHandle id="frequency" />
+          <AudioInputHandle
+            nodeId={id}
+            id="frequencyIn"
+            onChange={onChangeAmplitudeInputs}
+          />
           <InputLabeled
             label="Amp"
             type="number"
             step={getStep(data.amplitude)}
             value={data.amplitude}
-            onChange={(value) => onUpdate({ id, amplitude: parseFloat(value) })}
+            onChange={onChangeAmplitude}
             className={mergeClasses("nodrag", s.Input)}
           />
         </div>
         <div className={s.Controls}>
-          <AudioInputHandle id="amplitude" />
+          <AudioInputHandle
+            nodeId={id}
+            id="amplitudeIn"
+            onChange={onChangeFrequencyInputs}
+          />
           <InputLabeled
             label="Freq"
             type="number"
             step={getStep(data.frequency)}
             value={data.frequency}
-            onChange={(value) => onUpdate({ id, frequency: parseFloat(value) })}
+            onChange={onChangeFrequency}
             className={mergeClasses("nodrag", s.Input)}
           />
         </div>
