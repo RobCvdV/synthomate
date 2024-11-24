@@ -13,7 +13,7 @@ import { SelectLabeled } from "@/components/core/SelectLabeled";
 import { mergeClasses } from "@/utils/mergeClasses";
 import { Label } from "@core/Label";
 import { AudioOutputHandle } from "@flow/AudioOutputHandle";
-import { withLogger } from "@core/withLogger";
+import { withLogger } from "@/utils/withLogger";
 
 function getStep(value: number) {
   if (value < 1) return 0.01;

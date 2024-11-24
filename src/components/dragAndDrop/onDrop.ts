@@ -16,11 +16,6 @@ export const useOnDrop = (): DragEventHandler<HTMLDivElement> => {
     (event) => {
       event.preventDefault();
 
-      // check if the dropped element is valid
-      if (type && type in ["colorChooser", "waveGenerator"]) {
-        return;
-      }
-
       // project was renamed to screenToFlowPosition
       // and you don't need to subtract the reactFlowBounds.left/top anymore
       // details: https://reactflow.dev/whats-new/2023-11-10

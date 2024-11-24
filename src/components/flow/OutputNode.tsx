@@ -6,7 +6,7 @@ import { OutputData, OutputNodeType } from "@/domain/Output";
 import { InputLabeled } from "@/components/core/InputLabeled";
 import { mergeClasses } from "@/utils/mergeClasses";
 import { Label } from "@core/Label";
-import { withLogger } from "@core/withLogger";
+import { withLogger } from "@/utils/withLogger";
 import { useStore } from "@/store/store";
 
 type Props = NodeProps<OutputNodeType>;

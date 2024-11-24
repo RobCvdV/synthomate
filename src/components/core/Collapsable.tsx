@@ -1,7 +1,6 @@
 import { FC, MouseEvent, ReactNode, useCallback, useState } from "react";
 import s from "./Collapsable.module.css";
 import { mergeClasses } from "@/utils/mergeClasses";
-import { Line } from "@core/Line";
 
 export type Props = {
   initialCollapsed?: boolean;

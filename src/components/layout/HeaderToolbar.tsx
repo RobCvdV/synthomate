@@ -13,6 +13,8 @@ import { Spacer } from "@core/Spacer";
 import { useStore } from "@/store/store";
 import { SliderDnd } from "@flow/SliderNode";
 import { SampleDnd } from "@flow/SampleNode";
+import { SynthData } from "@/store/synthSlice";
+import { SampleData } from "@/domain";
 
 let _tb = 0;
 export function HeaderToolbar() {
@@ -24,7 +26,7 @@ export function HeaderToolbar() {
     (
       event: React.DragEvent<HTMLDivElement>,
       type: AppNodeTypes,
-      data?: AnyObject,
+      data?: SynthData,
     ) => {
       setProps(type, data);
       event.dataTransfer.effectAllowed = "move";
@@ -54,7 +56,13 @@ export function HeaderToolbar() {
       />
       <SampleDnd
         label={"Sample"}
-        onDragStart={(e) => onDragStart(e, "sample")}
+        onDragStart={(e) =>
+          onDragStart(e, "sample", {
+            frequency: 44100,
+            amplitude: 1,
+            trigger: 0,
+          } as SampleData)
+        }
       />
       <Spacer />
       <Button className={s.Info} label="Clear All" onClick={clearAll} />

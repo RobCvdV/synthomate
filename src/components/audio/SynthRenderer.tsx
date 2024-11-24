@@ -5,7 +5,7 @@ import { useStore } from "@/store/store";
 import { AppState } from "@/store/types";
 import { mergeClasses } from "@/utils/mergeClasses";
 import { InputLabeled } from "@core/InputLabeled";
-import { withLogger } from "@core/withLogger";
+import { withLogger } from "@/utils/withLogger";
 import s from "./SynthRenderer.module.css";
 import { ToggleButton } from "@core/ToggleButton";
 import { el } from "@elemaudio/core";

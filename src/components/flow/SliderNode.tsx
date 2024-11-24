@@ -4,7 +4,7 @@ import s from "./Slider.module.css";
 import { SliderData, SliderNodeType } from "@/domain/Slider";
 import { InputLabeled } from "@/components/core/InputLabeled";
 import { mergeClasses } from "@/utils/mergeClasses";
-import { withLogger } from "@core/withLogger";
+import { withLogger } from "@/utils/withLogger";
 import { useStore } from "@/store/store";
 import { AudioOutputHandle } from "@flow/AudioOutputHandle";
 import { Collapsable } from "@core/Collapsable";
@@ -30,7 +30,7 @@ export const SliderNode = withLogger<Props>(
         const minValue = parseFloat(min);
         onUpdate({ id, min: minValue });
       },
-      [onUpdate, id, log],
+      [onUpdate, id],
     );
 
     const onChangeMax = useCallback(
@@ -38,7 +38,7 @@ export const SliderNode = withLogger<Props>(
         const maxValue = parseFloat(max);
         onUpdate({ id, max: maxValue });
       },
-      [onUpdate, id, log],
+      [onUpdate, id],
     );
 
     return (

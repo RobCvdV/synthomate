@@ -2,18 +2,21 @@ import { el, ElemNode } from "@elemaudio/core";
 import WebRenderer from "@elemaudio/web-renderer";
 import { AudioNodeType, AudioParams, AudioProps } from "./types";
 import { WaveGeneratorData, WaveType } from "@/domain/WaveGenerator";
-import { Exception } from "@/types/Exception";
+import { Exception, AnyObject } from "@/types";
 import { SynthData } from "@/store/synthSlice";
 import { OutputData } from "@/domain/Output";
 import { getNodesById } from "@/store/store";
 import { SliderData } from "@/domain";
 import { SampleData } from "@/domain/Sample";
+import { LogClass, Logger } from "@/utils/withLogger";
 
 type SynthRef<N extends AudioNodeType> = [
   ElemNode,
   (newProps: AudioProps<N>) => Promise<void>,
 ];
 
+export interface Synth extends LogClass {}
+@Logger("Synth", "blue")
 export class Synth {
   isInitialized = false;
   audioNode?: AudioWorkletNode;
@@ -21,12 +24,15 @@ export class Synth {
   constructor(
     readonly ctx = new AudioContext(),
     readonly core = new WebRenderer(),
+    readonly samples: AnyObject<Float32Array> = {},
     readonly refs = new Map<string, any>(),
-  ) {}
+  ) {
+    this.log("Synth created");
+  }
 
   init() {
     if (this.isInitialized) {
-      console.log("Synth is already initialized");
+      this.log("Synth is already initialized");
       return Promise.resolve(this);
     }
     return this.core
@@ -37,9 +43,9 @@ export class Synth {
       })
       .then((node) => {
         this.audioNode = node;
-        console.log("Synth initialized");
+        this.log("Synth initialized");
         node.connect(this.ctx.destination);
-        console.log("Synth connected to destination");
+        this.log("Synth connected to destination");
         this.isInitialized = true;
         return this;
       });
@@ -51,9 +57,11 @@ export class Synth {
 
   render(node1: ElemNode, node2: ElemNode) {
     if (!this.isInitialized) {
-      console.log("Synth is not initialized. Call synth.init() first");
+      this.log("Synth is not initialized. Call synth.init() first");
     }
-    return this.core.render(node1, node2);
+    this.core.render(node1, node2).catch((e) => {
+      this.error("Error rendering synth", e);
+    });
   }
 
   static silence() {
@@ -97,6 +105,7 @@ export class Synth {
           );
         return el.syncphasor(rate, reset);
       default:
+        console.log("WaveType not found", type);
         throw Exception.IsNotImplemented.because(type + " is not implemented");
     }
   }
@@ -172,8 +181,9 @@ export class Synth {
       amp = el.mul(amp, ampIn);
     }
 
+    this.log("Sample", { id, path, freq, pulse, amp });
     const wave = el.sample(
-      { key: `${id}_sample`, path, mode: "oneshot" },
+      { key: `${id}_sample`, path: path + "_0", mode: "oneshot" },
       pulse,
       freq,
     );
@@ -197,11 +207,31 @@ export class Synth {
         return this.createWaveGenerator(data as WaveGeneratorData);
       case "slider":
         return this.createSlider(data as SliderData);
+      case "sample":
+        return this.createSample(data as SampleData);
       default:
         throw Exception.IsNotImplemented.because(
           data.type + " is not implemented",
         );
     }
+  }
+
+  async loadSample(name: string, buf: ArrayBuffer) {
+    let sampleBuffer = await this.ctx.decodeAudioData(buf);
+    for (let i = 0; i < sampleBuffer.numberOfChannels; i++) {
+      const name_c = `${name}_${i + 1}`;
+      this.log("Sample loaded", { name: name_c });
+      this.samples[name_c] = sampleBuffer.getChannelData(i);
+    }
+    this.log("Samples", Object.keys(this.samples));
+    return this.core
+      .updateVirtualFileSystem(this.samples)
+      .then((args) => {
+        this.log("Virtual file system updated", args);
+      })
+      .catch((e) => {
+        this.error("Error updating virtual file system", e);
+      });
   }
 
   getRefConst(key: string, value: number) {
@@ -229,12 +259,12 @@ export function getSynth(init?: boolean) {
     if (_synthInstance) {
       return Promise.resolve(_synthInstance);
     }
-    _synthInstance = new Synth();
-    return _synthInstance.init().then((synth) => {
+    return new Synth().init().then((synth) => {
       console.log(
         "SynthRenderer: synthInstance initialized",
         typeof synth.render,
       );
+      _synthInstance = synth;
       return synth;
     });
   }
