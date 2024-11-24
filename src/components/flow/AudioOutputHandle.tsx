@@ -1,7 +1,7 @@
 import { CSSProperties, FC, useMemo } from "react";
 import { Handle, HandleProps, Position } from "@xyflow/react";
 import s from "./AudioHandle.module.css";
-import { Id } from "@/types/Id";
+import { Id } from "@/types";
 
 export type AudioHandleProps = Omit<HandleProps, "position" | "type"> & {
   id: Id;

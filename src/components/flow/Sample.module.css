@@ -1,19 +1,30 @@
-.Output {
-  margin: 3pt;
-  padding: 8pt;
+.Sample {
+  padding: 3pt 0;
   border-radius: 10pt;
-  border: 1pt solid #ff8cd9;
+  border: 1pt solid #9dcaff;
   cursor: pointer;
   color: #fff;
   width: 80pt;
   display: flex;
-  flex-direction: column;
   align-items: stretch;
   justify-content: left;
+  flex-direction: column;
 }
 
 .Controls {
-  margin: 2pt 0;
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: center;
+  margin: 1pt 0;
+}
+
+.Input {
+  flex: 1;
+  min-width: calc(90% - 16pt);
+  margin: 0 8pt;
 }
 
 .Dnd {
@@ -25,8 +36,7 @@
   height: 30pt;
   background-color: #333;
   border-radius: 25%;
-  border: 1pt solid #ff8cd9;
+  border: 1pt solid #9dcaff;
   cursor: pointer;
   color: #fff;
 }
-

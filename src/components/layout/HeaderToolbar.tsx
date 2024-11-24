@@ -11,6 +11,8 @@ import { OutputDnd } from "@flow/OutputNode";
 import { Button } from "@core/Button";
 import { Spacer } from "@core/Spacer";
 import { useStore } from "@/store/store";
+import { SliderDnd } from "@flow/SliderNode";
+import { SampleDnd } from "@flow/SampleNode";
 
 let _tb = 0;
 export function HeaderToolbar() {
@@ -32,12 +34,6 @@ export function HeaderToolbar() {
 
   return (
     <Panel className={s.Header} position={"top-left"}>
-      {/*<ColorChooserDnd*/}
-      {/*  onDragStart={(e) =>*/}
-      {/*    onDragStart(e, "colorChooser", { color: "#4FD1C5" })*/}
-      {/*  }*/}
-      {/*  color={"#4FD1C5"}*/}
-      {/*/>*/}
       <WaveGeneratorDnd
         label={"Wave"}
         onDragStart={(e) =>
@@ -51,6 +47,14 @@ export function HeaderToolbar() {
       <OutputDnd
         label={"Output"}
         onDragStart={(e) => onDragStart(e, "output")}
+      />
+      <SliderDnd
+        label={"Slider"}
+        onDragStart={(e) => onDragStart(e, "slider")}
+      />
+      <SampleDnd
+        label={"Sample"}
+        onDragStart={(e) => onDragStart(e, "sample")}
       />
       <Spacer />
       <Button className={s.Info} label="Clear All" onClick={clearAll} />

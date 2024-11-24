@@ -8,6 +8,8 @@ import { WaveGeneratorNode } from "@flow/WaveGeneratorNode";
 import { OutputNode } from "@flow/OutputNode";
 import { useOnDrop } from "@/components/dragAndDrop/onDrop";
 import { useOnDragOver } from "@/components/dragAndDrop/onDragOver";
+import { SliderNode } from "@flow/SliderNode";
+import { SampleNode } from "@flow/SampleNode";
 
 const selector = (state: AppState) => ({
   nodes: state.nodes,
@@ -20,6 +22,8 @@ const selector = (state: AppState) => ({
 const nodeTypes = {
   waveGenerator: WaveGeneratorNode,
   output: OutputNode,
+  slider: SliderNode,
+  sample: SampleNode,
 };
 
 export function SynthFlow() {

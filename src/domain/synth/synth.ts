@@ -6,6 +6,13 @@ import { Exception } from "@/types/Exception";
 import { SynthData } from "@/store/synthSlice";
 import { OutputData } from "@/domain/Output";
 import { getNodesById } from "@/store/store";
+import { SliderData } from "@/domain";
+import { SampleData } from "@/domain/Sample";
+
+type SynthRef<N extends AudioNodeType> = [
+  ElemNode,
+  (newProps: AudioProps<N>) => Promise<void>,
+];
 
 export class Synth {
   isInitialized = false;
@@ -14,6 +21,7 @@ export class Synth {
   constructor(
     readonly ctx = new AudioContext(),
     readonly core = new WebRenderer(),
+    readonly refs = new Map<string, any>(),
   ) {}
 
   init() {
@@ -37,6 +45,10 @@ export class Synth {
       });
   }
 
+  get isRunning() {
+    return this.ctx.state === "running";
+  }
+
   render(node1: ElemNode, node2: ElemNode) {
     if (!this.isInitialized) {
       console.log("Synth is not initialized. Call synth.init() first");
@@ -48,7 +60,11 @@ export class Synth {
     return el.sin(0);
   }
 
-  static getWaveType(type: WaveType, rate: ElemNode): ElemNode {
+  static getWaveType(
+    type: WaveType,
+    rate: ElemNode,
+    reset?: ElemNode,
+  ): ElemNode {
     switch (type) {
       case "sine":
         return el.cycle(rate);
@@ -66,11 +82,40 @@ export class Synth {
         return el.bleptriangle(rate);
       case "metro":
         return el.metro();
+      case "train":
+        return el.train(rate);
+      case "pinknoise":
+        return el.pinknoise();
       case "noise":
         return el.noise();
+      case "phasor":
+        return el.phasor(rate);
+      case "syncphasor":
+        if (!reset)
+          throw Exception.IsNotValid.because(
+            "Sync Phasor requires a reset signal",
+          );
+        return el.syncphasor(rate, reset);
       default:
         throw Exception.IsNotImplemented.because(type + " is not implemented");
     }
+  }
+
+  createOutput(data: OutputData): [ElemNode, ElemNode] {
+    const { volume, id, left = [], right = [] } = data;
+    const leftNodes = left.map((d) => this.createNode(d));
+    const rightNodes = right.map((d) => this.createNode(d));
+    if (!leftNodes.length) {
+      leftNodes.push(Synth.silence());
+    }
+    if (!rightNodes.length) {
+      rightNodes.push(Synth.silence());
+    }
+    const vol = el.const({ key: id + "_vol", value: volume });
+    return [
+      el.mul(vol, el.add(...leftNodes)),
+      el.mul(vol, el.add(...rightNodes)),
+    ];
   }
 
   createWaveGenerator(data: WaveGeneratorData): ElemNode {
@@ -98,21 +143,48 @@ export class Synth {
     return el.mul(amp, wave);
   }
 
-  createOutput(data: OutputData): [ElemNode, ElemNode] {
-    const { volume, id, left = [], right = [] } = data;
-    const leftNodes = left.map((d) => this.createNode(d));
-    const rightNodes = right.map((d) => this.createNode(d));
-    if (!leftNodes.length) {
-      leftNodes.push(Synth.silence());
+  createSample(data: SampleData): ElemNode {
+    const {
+      frequency,
+      path,
+      amplitude,
+      trigger,
+      id,
+      frequencyIn = [],
+      amplitudeIn = [],
+    } = data;
+    let freq = el.const({ key: id + "_freq", value: frequency });
+    if (frequencyIn.length) {
+      const freqIn = el.add(...frequencyIn.map((d) => this.createNode(d)));
+      freq = el.mul(freq, freqIn);
     }
-    if (!rightNodes.length) {
-      rightNodes.push(Synth.silence());
+
+    let pulse: ElemNode;
+    if (typeof trigger === "number") {
+      pulse = el.train(el.const({ key: id + "_train", value: trigger }));
+    } else {
+      pulse = this.createNode(trigger);
     }
-    const vol = el.const({ key: id + "_vol", value: volume });
-    return [
-      el.mul(vol, el.add(...leftNodes)),
-      el.mul(vol, el.add(...rightNodes)),
-    ];
+
+    let amp = el.const({ key: id + "_amp", value: amplitude });
+    if (amplitudeIn.length) {
+      const ampIn = el.add(...amplitudeIn.map((d) => this.createNode(d)));
+      amp = el.mul(amp, ampIn);
+    }
+
+    const wave = el.sample(
+      { key: `${id}_sample`, path, mode: "oneshot" },
+      pulse,
+      freq,
+    );
+    return el.mul(amp, wave);
+  }
+
+  createSlider(data: SliderData): ElemNode {
+    const { value, id } = data;
+    // const [n] = this.getRefConst(id as string, value);
+    // return n;
+    return el.const({ key: `${id}`, value });
   }
 
   createNode(nodeId: string) {
@@ -123,30 +195,31 @@ export class Synth {
     switch (data.type) {
       case "waveGenerator":
         return this.createWaveGenerator(data as WaveGeneratorData);
-      case "output":
-        return Synth.silence();
+      case "slider":
+        return this.createSlider(data as SliderData);
+      default:
+        throw Exception.IsNotImplemented.because(
+          data.type + " is not implemented",
+        );
     }
   }
 
   getRefConst(key: string, value: number) {
-    return this.core.createRef("const", { key }, [value]);
+    return this.getRef(key, "const", { value }, []);
   }
 
-  getRefNode<N extends AudioNodeType>(
+  getRef<N extends AudioNodeType>(
+    key: string,
     node: N,
     props: AudioProps<N>,
     params: AudioParams<N>,
   ) {
-    if (!this.isInitialized) {
-      console.log("Synth is not initialized. Call synth.init() first");
-      return;
+    let r = this.refs.get(key);
+    if (!r) {
+      r = this.core.createRef(node, props, params) as SynthRef<N>;
+      this.refs.set(key, r);
     }
-    // @ts-ignore
-    // return this.core.createRef(node, props, ...params) as [
-    return this.core.createRef(node, props, params) as [
-      ElemNode,
-      (newProps: AudioProps<N>) => Promise<void>,
-    ];
+    return r as SynthRef<N>;
   }
 }
 

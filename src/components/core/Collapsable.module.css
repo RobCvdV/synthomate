@@ -1,0 +1,57 @@
+.Main {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+}
+
+.closed {
+  transition: all 0.2s linear;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  font-size: 0;
+}
+
+.open {
+  transition: all 0.2s linear;
+  opacity: 1;
+  max-height: 50pt;
+  overflow: hidden;
+  font-size: 1em;
+}
+
+.lineClosed {
+  transition: all 0.2s linear;
+  margin: 0 20%;
+  padding-top: 5pt;
+  height: 1pt;
+  border-bottom: 0.5pt solid grey;
+  border-radius: 5pt;
+}
+
+.lineOpen {
+  transition: all 0.2s linear;
+  height: 8pt;
+  border-bottom: 0.5pt solid grey;
+  border-radius: 5pt;
+}
+
+.altClosed {
+  position: absolute;
+  width: 100%;
+  transition: all 0.2s linear;
+  height: 10pt;
+  opacity: 1;
+}
+
+.altOpen {
+  position: absolute;
+  width: 100%;
+  transition: all 0.2s linear;
+  height: 0pt;
+  opacity: 0;
+}

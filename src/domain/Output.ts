@@ -1,5 +1,5 @@
 import type { Node } from "@xyflow/react";
-import { Id } from "@/types/Id";
+import { Id } from "@/types";
 
 export type OutputData = {
   id: Id;

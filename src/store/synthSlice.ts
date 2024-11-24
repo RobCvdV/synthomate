@@ -1,9 +1,17 @@
 import { StateCreator } from "zustand";
-import { WaveGeneratorData } from "@/domain/WaveGenerator";
-import { AppNode, AppState } from "./types";
-import { OutputData } from "@/domain/Output";
+import { AppNode, AppState } from "@/store/types";
+import {
+  OutputData,
+  SampleData,
+  SliderData,
+  WaveGeneratorData,
+} from "@/domain";
 
-export type SynthData = WaveGeneratorData | OutputData;
+export type SynthData =
+  | WaveGeneratorData
+  | OutputData
+  | SliderData
+  | SampleData;
 export type SynthType = SynthData["type"];
 
 export type SynthSlice = {

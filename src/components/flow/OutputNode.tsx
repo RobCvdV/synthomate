@@ -22,7 +22,7 @@ export const OutputNode = withLogger<Props>(
         log("onVolumeChange", volume);
         onUpdate({ id, volume });
       },
-      [onUpdate, id],
+      [onUpdate, id, log],
     );
 
     const onLeftChange = useCallback(

@@ -1,8 +1,6 @@
 import type { Node } from "@xyflow/react";
 import { ValueSource } from "@/types/ValueSource";
 import { Id } from "@/types/Id";
-import { ElemNode } from "@elemaudio/core";
-import { SynthData } from "@/store/synthSlice";
 
 export const WaveTypeDict = {
   sine: "Sine",
@@ -14,6 +12,10 @@ export const WaveTypeDict = {
   blepsaw: "Blep Saw",
   bleptriangle: "Blep Triangle",
   noise: "Noise",
+  pinknoise: "Pink Noise",
+  phasor: "Phasor",
+  syncphasor: "Sync Phasor",
+  train: "Train",
 } as const;
 export const AllWaveTypes = Object.keys(
   WaveTypeDict,

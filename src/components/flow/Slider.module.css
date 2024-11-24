@@ -1,0 +1,59 @@
+.Main {
+  margin: 0;
+  padding: 8pt;
+  border-radius: 10pt;
+  border: 1pt solid #ffec8c;
+  cursor: pointer;
+  color: #fff;
+  width: 80pt;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.Slider {
+  flex: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.Collapsed {
+  flex: 1;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+}
+.Collapsed span:first-child {
+  left: 0;
+  font-size: 6pt !important;
+  overflow: visible;
+}
+.Collapsed span:last-child {
+  right: 0;
+  font-size: 6pt !important;
+  overflow: visible;
+}
+
+.Controls {
+  margin: 2pt 0;
+  width: 50%;
+}
+
+.Dnd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5pt;
+  width: 40pt;
+  height: 30pt;
+  background-color: #333;
+  border-radius: 25%;
+  border: 1pt solid #ffec8c;
+  cursor: pointer;
+  color: #fff;
+}
+

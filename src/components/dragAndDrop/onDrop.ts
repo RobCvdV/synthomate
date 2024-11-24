@@ -5,12 +5,7 @@ import { useStore } from "@/store/store";
 import { v4 } from "uuid";
 import { AppNode } from "@/store/types";
 
-// Dnd stuff
-let id = "";
-const getId = () => {
-  id = v4();
-  return `dndnode_${id}`;
-};
+const getId = () => v4();
 
 export const useOnDrop = (): DragEventHandler<HTMLDivElement> => {
   const { screenToFlowPosition } = useReactFlow();

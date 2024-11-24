@@ -29,10 +29,8 @@ function useConnectionChange(
   const onConnect = useCallback(
     (connections: Connection[]) => {
       setSources((ss) => {
-        const newCs = [
-          ...new Set([...ss, ...connections.map((c) => c.source)]),
-        ];
-        onChange(newCs);
+        const newCs = connections.map((c) => c.source);
+        onChange([...ss, ...newCs]);
         return newCs;
       });
     },
